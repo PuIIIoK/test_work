@@ -1,0 +1,61 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: docker/backend/Dockerfile
+        image: laravel-app
+        container_name: laravel-app
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./backend:/var/www
+        networks:
+            - app-network
+
+    webserver:
+        image: nginx:alpine
+        container_name: laravel-nginx
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - ./backend:/var/www
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - app-network
+
+    db:
+        image: mysql:8.0
+        container_name: laravel-db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE:-laravel}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-root}
+            MYSQL_USER: ${DB_USERNAME:-laravel}
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - dbdata:/var/lib/mysql
+        networks:
+            - app-network
+
+    # npm:
+    #     image: node:18-alpine
+    #     container_name: laravel-npm
+    #     working_dir: /var/www/frontend
+    #     volumes:
+    #         - ./frontend:/var/www/frontend
+    #     entrypoint: ["npm", "run", "dev"]
+    #     ports:
+    #         - "5173:5173"
+    #     networks:
+    #         - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    dbdata:
+        driver: local
