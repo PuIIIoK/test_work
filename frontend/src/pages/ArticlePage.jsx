@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
 
+/**
+ * Компонент детальной страницы статьи
+ * 
+ * Отображает полный текст статьи, список комментариев и форму добавления комментария.
+ * При ошибке API использует mock данные для демонстрации функционала.
+ * 
+ * @component
+ * @returns {JSX.Element} Детальная страница статьи с комментариями
+ */
 const ArticlePage = () => {
     const { id } = useParams();
     const [article, setArticle] = useState(null);
@@ -11,6 +20,8 @@ const ArticlePage = () => {
 
     useEffect(() => {
         setLoading(true);
+
+        // Загрузка статьи с комментариями из API
         const fetchArticle = api.get(`/articles/${id}`);
 
         fetchArticle
@@ -23,7 +34,8 @@ const ArticlePage = () => {
             })
             .catch(error => {
                 console.error("Error fetching article:", error);
-                // Mock data
+
+                // Fallback: используем mock данные для демонстрации UI
                 setArticle({
                     id,
                     title: 'The Future of AI in Design',
@@ -38,8 +50,18 @@ const ArticlePage = () => {
             });
     }, [id]);
 
+    /**
+     * Обработчик отправки нового комментария
+     * 
+     * Отправляет комментарий на сервер через API.
+     * При ошибке добавляет комментарий локально с временным ID.
+     * 
+     * @param {Event} e - Событие отправки формы
+     */
     const handleCommentSubmit = (e) => {
         e.preventDefault();
+
+        // Отправка комментария на backend
         api.post(`/articles/${id}/comments`, newComment)
             .then(response => {
                 setComments([...comments, response.data]);
@@ -47,6 +69,8 @@ const ArticlePage = () => {
             })
             .catch(error => {
                 console.error("Error posting comment", error);
+
+                // Fallback: добавляем комментарий локально для демонстрации
                 const mockComment = { ...newComment, id: Date.now(), created_at: new Date().toISOString() };
                 setComments([...comments, mockComment]);
                 setNewComment({ author_name: '', content: '' });

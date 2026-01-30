@@ -2,19 +2,39 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
+/**
+ * Компонент страницы создания новой статьи
+ * 
+ * Предоставляет форму для создания статьи с полями title и content.
+ * После успешной отправки перенаправляет на главную страницу.
+ * 
+ * @component
+ * @returns {JSX.Element} Форма создания статьи
+ */
 const CreateArticlePage = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const navigate = useNavigate();
 
+    /**
+     * Обработчик отправки формы создания статьи
+     * 
+     * Отправляет данные новой статьи на backend.
+     * При успехе или ошибке перенаправляет на главную страницу.
+     * 
+     * @param {Event} e - Событие отправки формы
+     */
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Отправка новой статьи на сервер
         api.post('/articles', { title, content })
             .then(() => {
                 navigate('/');
             })
             .catch(error => {
                 console.error("Error creating article:", error);
+                // Даже при ошибке возвращаемся на главную
                 navigate('/');
             });
     };

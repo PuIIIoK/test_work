@@ -2,11 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 
+/**
+ * Компонент отображения списка статей блога
+ * 
+ * Загружает и отображает список всех статей из backend API.
+ * При ошибке API показывает mock данные для демонстрации UI.
+ * 
+ * @component
+ * @returns {JSX.Element} Список статей с карточками
+ */
 const ArticleList = () => {
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Загрузка статей из API
         api.get('/articles')
             .then(response => {
                 setArticles(response.data);
@@ -15,6 +25,9 @@ const ArticleList = () => {
             .catch(error => {
                 console.error("Error fetching articles:", error);
                 setLoading(false);
+
+                // Fallback: показываем mock данные, если API недоступно
+                // Это позволяет демонстрировать UI даже без работающего backend
                 setArticles([
                     { id: 1, title: 'Strategies for Modern Web Development', created_at: '2023-10-27', content: 'Exploring the shift towards server-side rendering and static generation in modern web frameworks...' },
                     { id: 2, title: 'The Future of AI in Design', created_at: '2023-10-28', content: 'How generative models are assisting designers in creating more user-centric interfaces and workflows...' },
