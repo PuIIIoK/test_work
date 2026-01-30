@@ -33,32 +33,15 @@
 - **Networking**: Docker bridge network
 - **Volumes**: Persistent MySQL data
 
-## Архитектурная Диаграмма
+## Архитектура Взаимодействия
 
-\`\`\`mermaid
-graph TB
-    subgraph "Client Browser"
-        A[React SPA<br/>:5173]
-    end
-    
-    subgraph "Docker Network"
-        B[Nginx<br/>:8000]
-        C[PHP-FPM<br/>laravel-app]
-        D[(MySQL<br/>laravel-db)]
-    end
-    
-    A -->|HTTP Requests| B
-    B -->|FastCGI| C
-    C -->|Eloquent ORM| D
-    D -->|Query Results| C
-    C -->|JSON Response| B
-    B -->|API Response| A
-    
-    style A fill:#61DAFB,stroke:#333,stroke-width:2px
-    style B fill:#269539,stroke:#333,stroke-width:2px
-    style C fill:#777BB4,stroke:#333,stroke-width:2px
-    style D fill:#4479A1,stroke:#333,stroke-width:2px
-\`\`\`
+Приложение следует стандартной архитектуре:
+- **Client Browser** (React SPA на :5173) отправляет HTTP запросы
+- **Nginx** (:8000) принимает запросы и проксирует через FastCGI
+- **PHP-FPM** (laravel-app) обрабатывает запросы через Laravel
+- **MySQL** (laravel-db) хранит данные статей и комментариев
+
+
 
 ## Структура Проекта
 
@@ -166,48 +149,23 @@ graph TB
 
 ### Получение Списка Статей
 
-\`\`\`mermaid
-sequenceDiagram
-    participant User
-    participant React
-    participant Axios
-    participant Nginx
-    participant Laravel
-    participant MySQL
-
-    User->>React: Открывает главную страницу
-    React->>Axios: api.get('/articles')
-    Axios->>Nginx: GET http://localhost:8000/api/articles
-    Nginx->>Laravel: FastCGI request
-    Laravel->>MySQL: SELECT * FROM articles
-    MySQL-->>Laravel: Article rows
-    Laravel-->>Nginx: JSON response
-    Nginx-->>Axios: HTTP 200 + JSON
-    Axios-->>React: response.data
-    React-->>User: Отображает список статей
-\`\`\`
+1. **User** открывает главную страницу
+2. **React** компонент делает запрос через `api.get('/articles')`
+3. **Axios** отправляет GET запрос на `http://localhost:8000/api/articles`
+4. **Nginx** принимает запрос и передает через FastCGI
+5. **Laravel** обрабатывает через `ArticleController@index`
+6. **MySQL** выполняет `SELECT * FROM articles`
+7. **Laravel** формирует JSON ответ
+8. **React** получает данные и отображает список статей
 
 ### Добавление Комментария
 
-\`\`\`mermaid
-sequenceDiagram
-    participant User
-    participant React
-    participant Axios
-    participant Laravel
-    participant MySQL
-
-    User->>React: Заполняет форму комментария
-    User->>React: Нажимает "Submit"
-    React->>Axios: api.post('/articles/1/comments', data)
-    Axios->>Laravel: POST /api/articles/1/comments
-    Laravel->>Laravel: Валидация данных
-    Laravel->>MySQL: INSERT INTO comments
-    MySQL-->>Laravel: new comment ID
-    Laravel-->>Axios: HTTP 201 + comment JSON
-    Axios-->>React: response.data
-    React-->>User: Добавляет комментарий в UI
-\`\`\`
+1. **User** заполняет форму комментария и нажимает Submit
+2. **React** отправляет `api.post('/articles/1/comments', data)`
+3. **Laravel** валидирует данные (author_name, content)
+4. **MySQL** выполняет `INSERT INTO comments`
+5. **Laravel** возвращает HTTP 201 + созданный комментарий
+6. **React** добавляет комментарий в UI без перезагрузки
 
 ## Backend Архитектура
 
@@ -231,27 +189,21 @@ Laravel следует паттерну MVC:
 
 ### Database Schema
 
-\`\`\`mermaid
-erDiagram
-    ARTICLES ||--o{ COMMENTS : "has many"
-    
-    ARTICLES {
-        int id PK
-        string title
-        text content
-        timestamp created_at
-        timestamp updated_at
-    }
-    
-    COMMENTS {
-        int id PK
-        int article_id FK
-        string author_name
-        text content
-        timestamp created_at
-        timestamp updated_at
-    }
-\`\`\`
+**Таблица: articles**
+- `id` (PK) - уникальный идентификатор
+- `title` - заголовок статьи
+- `content` - текст статьи
+- `created_at`, `updated_at` - временные метки
+
+**Таблица: comments**
+- `id` (PK) - уникальный идентификатор
+- `article_id` (FK) - связь с таблицей articles
+- `author_name` - имя автора комментария
+- `content` - текст комментария
+- `created_at`, `updated_at` - временные метки
+
+**Связи:**
+- Article `hasMany` Comments (один ко многим)
 
 ### API Endpoints
 
@@ -266,27 +218,19 @@ erDiagram
 
 ### Component Hierarchy
 
-\`\`\`mermaid
-graph TD
-    A[main.jsx] --> B[App.jsx]
-    B --> C[ThemeProvider]
-    C --> D[BrowserRouter]
-    D --> E[Routes]
-    E --> F[ArticleList]
-    E --> G[ArticlePage]
-    E --> H[CreateArticlePage]
-    
-    F --> I[api.get /articles]
-    G --> J[api.get /articles/:id]
-    G --> K[api.post /articles/:id/comments]
-    H --> L[api.post /articles]
-    
-    style B fill:#61DAFB
-    style C fill:#FFD700
-    style F fill:#90EE90
-    style G fill:#90EE90
-    style H fill:#90EE90
-\`\`\`
+**Иерархия компонентов:**
+
+```
+main.jsx (entry point)
+  └─ App.jsx (root component)
+      └─ ThemeProvider (dark/light mode)
+          └─ BrowserRouter (routing)
+              └─ Routes
+                  ├─ ArticleList (/) → api.get('/articles')
+                  ├─ ArticlePage (/:id) → api.get('/articles/:id')
+                  │                     → api.post('/articles/:id/comments')
+                  └─ CreateArticlePage (/create) → api.post('/articles')
+```
 
 ### Состояние Приложения
 
@@ -406,19 +350,10 @@ Database Container
 
 ### Горизонтальное Масштабирование
 
-\`\`\`mermaid
-graph LR
-    A[Load Balancer] --> B[PHP-FPM 1]
-    A --> C[PHP-FPM 2]
-    A --> D[PHP-FPM 3]
-    B --> E[(MySQL Master)]
-    C --> E
-    D --> E
-    E --> F[(MySQL Replica)]
-    
-    style A fill:#FF6B6B
-    style E fill:#4ECDC4
-\`\`\`
+Для высоких нагрузок можно использовать:
+- **Load Balancer** распределяет запросы между несколькими PHP-FPM экземплярами
+- **Multiple PHP-FPM Containers** (горизонтальное масштабирование backend)
+- **MySQL Master-Replica** для чтения и записи
 
 ## Производительность
 
