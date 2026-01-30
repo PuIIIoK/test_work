@@ -62,97 +62,105 @@ graph TB
 
 ## Структура Проекта
 
-\`\`\`
-test_work/
-├── backend/                     # Laravel API
-│   ├── app/
-│   │   ├── Console/            # Artisan команды
-│   │   │   └── Kernel.php      # Console kernel
-│   │   ├── Exceptions/         # Обработка исключений
-│   │   │   └── Handler.php     # Global exception handler
-│   │   ├── Http/
-│   │   │   ├── Controllers/    # API контроллеры
-│   │   │   │   ├── ArticleController.php  # CRUD для статей и комментариев
-│   │   │   │   └── Controller.php         # Base controller
-│   │   │   ├── Middleware/     # HTTP middleware
-│   │   │   │   ├── Authenticate.php       # Auth middleware
-│   │   │   │   ├── Cors.php               # CORS headers
-│   │   │   │   └── RedirectIfAuthenticated.php
-│   │   │   └── Kernel.php      # HTTP kernel
-│   │   ├── Models/             # Eloquent модели
-│   │   │   ├── Article.php     # Модель статьи
-│   │   │   └── Comment.php     # Модель комментария
-│   │   └── Providers/          # Service providers
-│   │       └── RouteServiceProvider.php   # Route registration
-│   ├── bootstrap/              # Bootstrap files
-│   │   ├── app.php             # Application bootstrap
-│   │   └── cache/              # Cached configs
-│   ├── config/                 # Конфигурации
-│   │   ├── app.php             # App configuration
-│   │   ├── auth.php            # Authentication
-│   │   ├── cache.php           # Cache stores
-│   │   ├── cors.php            # CORS settings
-│   │   ├── database.php        # DB connections
-│   │   ├── filesystems.php     # File storage
-│   │   ├── logging.php         # Log channels
-│   │   ├── session.php         # Session config
-│   │   └── view.php            # View paths
-│   ├── database/
-│   │   ├── migrations/         # Database схемы
-│   │   │   ├── 2024_xx_create_articles_table.php
-│   │   │   └── 2024_xx_create_comments_table.php
-│   │   └── seeders/            # Тестовые данные
-│   │       └── DatabaseSeeder.php
-│   ├── public/                 # Public web root
-│   │   └── index.php           # Front controller
-│   ├── resources/              # Resources
-│   │   └── views/              # Blade templates (не используется)
-│   ├── routes/                 # Route definitions
-│   │   ├── api.php             # API routes
-│   │   ├── auth.php            # Auth routes
-│   │   ├── console.php         # Console routes
-│   │   └── web.php             # Web routes
-│   ├── storage/                # Storage files
-│   │   ├── app/                # Application files
-│   │   ├── framework/          # Framework cache
-│   │   └── logs/               # Log files
-│   ├── .env                    # Environment variables
-│   ├── .env.example            # Environment template
-│   ├── artisan                 # Artisan CLI
-│   └── composer.json           # PHP dependencies
-│
-├── frontend/                    # React SPA
-│   ├── public/                 # Static assets
-│   │   └── vite.svg            # Vite logo
-│   ├── src/
-│   │   ├── assets/             # Images, fonts
-│   │   ├── context/            # React contexts
-│   │   │   └── ThemeContext.jsx  # Dark/light theme
-│   │   ├── pages/              # Page components
-│   │   │   ├── ArticleList.jsx      # Список статей
-│   │   │   ├── ArticlePage.jsx      # Детальная страница
-│   │   │   └── CreateArticlePage.jsx # Создание статьи
-│   │   ├── services/           # API layer
-│   │   │   └── api.js          # Axios client
-│   │   ├── App.jsx             # Root component
-│   │   ├── index.css           # Global styles
-│   │   └── main.jsx            # Entry point
-│   ├── index.html              # HTML template
-│   ├── package.json            # Node dependencies
-│   ├── postcss.config.js       # PostCSS config
-│   ├── tailwind.config.js      # Tailwind config (в index.html)
-│   └── vite.config.js          # Vite config
-│
-├── docker/                      # Docker конфигурации
-│   ├── backend/
-│   │   └── Dockerfile          # PHP-FPM image
-│   └── nginx/
-│       └── conf.d/
-│           └── app.conf        # Nginx server config
-│
-├── docker-compose.yml           # Docker orchestration
-└── README.md                    # Project documentation
-\`\`\`
+### Backend - Laravel API
+
+**app/** - Основной код приложения
+- **Console/Kernel.php** - Console kernel для Artisan команд
+- **Exceptions/Handler.php** - Global exception handler
+- **Http/Controllers/** - API контроллеры
+  - **ArticleController.php** - CRUD для статей и комментариев
+  - Controller.php - Base controller
+- **Http/Middleware/** - HTTP middleware
+  - Authenticate.php - Auth middleware  
+  - **Cors.php** - CORS headers
+  - RedirectIfAuthenticated.php
+- **Http/Kernel.php** - HTTP kernel
+- **Models/** - Eloquent модели
+  - **Article.php** - Модель статьи
+  - **Comment.php** - Модель комментария
+- **Providers/RouteServiceProvider.php** - Route registration
+
+**bootstrap/** - Bootstrap files
+- app.php - Application bootstrap
+- cache/ - Cached configs
+
+**config/** - Конфигурационные файлы
+- app.php, auth.php, cache.php
+- **cors.php** - CORS settings
+- **database.php** - DB connections
+- filesystems.php, logging.php, session.php, view.php
+
+**database/** - База данных
+- **migrations/** - Database схемы
+  - 2024_xx_create_articles_table.php
+  - 2024_xx_create_comments_table.php
+- **seeders/DatabaseSeeder.php** - Тестовые данные
+
+**public/** - Public web root
+- **index.php** - Front controller
+
+**resources/views/** - Blade templates (не используется в API-only режиме)
+
+**routes/** - Route definitions
+- **api.php** - API routes
+- web.php, auth.php, console.php
+
+**storage/** - Storage files
+- app/ - Application files
+- framework/ - Framework cache
+- logs/ - Log files
+
+**Конфигурационные файлы:**
+- .env - Environment variables
+- .env.example - Environment template
+- **artisan** - Artisan CLI
+- **composer.json** - PHP dependencies
+
+---
+
+### Frontend - React SPA
+
+**public/** - Static assets
+- vite.svg - Vite logo
+
+**src/** - Исходный код
+- **assets/** - Images, fonts
+- **context/ThemeContext.jsx** - Dark/light theme provider
+- **pages/** - Page components
+  - **ArticleList.jsx** - Список статей
+  - **ArticlePage.jsx** - Детальная страница
+  - **CreateArticlePage.jsx** - Создание статьи
+- **services/api.js** - Axios client для backend API
+- **App.jsx** - Root component + Router
+- **index.css** - Global styles
+- **main.jsx** - Entry point
+
+**Конфигурационные файлы:**
+- index.html - HTML template
+- **package.json** - Node dependencies
+- postcss.config.js - PostCSS config
+- tailwind.config.js - Tailwind config
+- vite.config.js - Vite config
+
+---
+
+### Docker Infrastructure
+
+**docker/backend/** - Backend контейнер
+- Dockerfile - PHP-FPM 8.2 image
+
+**docker/nginx/conf.d/** - Nginx конфигурация
+- app.conf - Nginx server config
+
+**docker-compose.yml** - Оркестрация 3 сервисов (app, db, nginx)
+
+---
+
+### Документация
+
+- **README.md** - Project documentation
+- **ARCHITECTURE.md** - Этот файл
+- **API_DOCS.md** - API documentation
 
 ## Поток Данных
 
