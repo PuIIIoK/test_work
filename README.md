@@ -91,44 +91,63 @@ npm run dev
 
 ## 📁 Структура Проекта
 
-```
-test_work/
-├── 📂 backend/                  # Laravel 10 API
-│   ├── 📂 app/
-│   │   ├── 📂 Http/
-│   │   │   ├── 📂 Controllers/  # ArticleController - CRUD operations
-│   │   │   └── 📂 Middleware/   # Cors - CORS headers
-│   │   ├── 📂 Models/           # Article, Comment - Eloquent models
-│   │   └── 📂 Providers/        # RouteServiceProvider
-│   ├── 📂 config/               # Конфигурационные файлы Laravel
-│   ├── 📂 database/
-│   │   ├── 📂 migrations/       # create_articles_table, create_comments_table
-│   │   └── 📂 seeders/          # DatabaseSeeder - тестовые данные
-│   ├── 📂 routes/               # api.php - API маршруты
-│   ├── 📂 public/               # index.php - точка входа
-│   └── 📄 composer.json         # PHP зависимости
-│
-├── 📂 frontend/                 # React SPA
-│   ├── 📂 src/
-│   │   ├── 📂 pages/            # React компоненты страниц
-│   │   │   ├── ArticleList.jsx      # Список статей
-│   │   │   ├── ArticlePage.jsx      # Детальная страница + комментарии
-│   │   │   └── CreateArticlePage.jsx # Форма создания статьи
-│   │   ├── 📂 services/         # api.js - Axios client
-│   │   ├── 📂 context/          # ThemeContext - Dark/Light mode
-│   │   ├── 📄 App.jsx           # Root component + Router
-│   │   └── 📄 main.jsx          # Entry point
-│   └── 📄 package.json          # Node dependencies
-│
-├── 📂 docker/                   # Docker конфигурации
-│   ├── 📂 backend/              # Dockerfile для PHP-FPM
-│   └── 📂 nginx/                # Nginx конфигурация
-│
-├── 📄 docker-compose.yml        # Оркестрация 3 сервисов
-├── 📄 README.md                 # Этот файл
-├── 📄 ARCHITECTURE.md           # Архитектурная документация
-└── 📄 API_DOCS.md               # Полная API документация
-```
+### Backend - Laravel API
+
+**Основные директории:**
+
+- `backend/app/` - Приложение Laravel
+  - `Http/Controllers/` - **ArticleController.php** (CRUD для статей и комментариев)
+  - `Http/Middleware/` - **Cors.php** (CORS headers), Authenticate, RedirectIfAuthenticated
+  - `Models/` - **Article.php**, **Comment.php** (Eloquent модели)
+  - `Providers/` - RouteServiceProvider (регистрация маршрутов)
+  - `Console/` - Kernel (Artisan команды)
+  - `Exceptions/` - Handler (обработка ошибок)
+
+- `backend/database/` - База данных
+  - `migrations/` - Схемы таблиц (articles, comments)
+  - `seeders/` - DatabaseSeeder.php (тестовые данные)
+
+- `backend/routes/` - Маршруты
+  - **api.php** - API endpoints
+  - web.php, auth.php, console.php
+
+- `backend/config/` - Конфигурация
+  - app.php, database.php, cors.php и др.
+
+- `backend/public/` - Публичная директория
+  - index.php (entry point)
+
+### Frontend - React SPA
+
+**Основные директории:**
+
+- `frontend/src/pages/` - Компоненты страниц
+  - **ArticleList.jsx** - Список статей
+  - **ArticlePage.jsx** - Детальная страница + комментарии
+  - **CreateArticlePage.jsx** - Форма создания статьи
+
+- `frontend/src/services/` - API слой
+  - **api.js** - Axios клиент для backend
+
+- `frontend/src/context/` - React contexts
+  - ThemeContext.jsx - Dark/Light режим
+
+- `frontend/src/` - Корневые файлы
+  - **App.jsx** - Root компонент + Router
+  - main.jsx - Entry point
+  - index.css - Глобальные стили
+
+### Docker
+
+- `docker/backend/` - Dockerfile для PHP-FPM
+- `docker/nginx/conf.d/` - Конфигурация Nginx
+- `docker-compose.yml` - Оркестрация 3 сервисов (app, db, nginx)
+
+### Документация
+
+- **README.md** - Главная документация, быстрый старт
+- **ARCHITECTURE.md** - Архитектура с диаграммами
+- **API_DOCS.md** - Полная API документация
 
 **Подробнее**: см. [ARCHITECTURE.md](./ARCHITECTURE.md)
 
@@ -313,15 +332,6 @@ docker compose ps
 - 📊 **Admin Panel** для управления контентом
 - ✅ **Unit/Integration Tests** (PHPUnit, Jest)
 - 🚀 **CI/CD Pipeline** (GitHub Actions)
-
-## 🤝 Контакты
-
-Для вопросов по проекту:
-- **Разработчик**: [Your Name]
-- **Email**: [your.email@example.com]
-- **GitHub**: [github.com/username]
-
----
 
 **Статус**: ✅ Завершено  
 **Версия**: 1.0  
